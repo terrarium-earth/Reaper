@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "reaper",
+  "version": "${version}",
+  "name": "Reaper",
+  "description": "Reaping the souls of mobs for energy",
+  "authors": [
+    "CodexAdrian"
+  ],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "earth.terrarium.reaper.fabric.ReaperFabric"
+    ],
+    "client": [
+      "earth.terrarium.reaper.client.fabric.ReaperClientImpl"
+    ]
+  },
+  "mixins": [
+    "reaper.mixins.json",
+    "reaper-common.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.9",
+    "minecraft": ">=1.19.2"
+  }
+}
