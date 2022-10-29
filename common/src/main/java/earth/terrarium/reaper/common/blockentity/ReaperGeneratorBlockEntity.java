@@ -5,6 +5,8 @@ import earth.terrarium.botarium.api.item.ItemContainerBlock;
 import earth.terrarium.botarium.api.item.SerializbleContainer;
 import earth.terrarium.botarium.api.item.SimpleItemContainer;
 import earth.terrarium.botarium.api.menu.ExtraDataMenuProvider;
+import earth.terrarium.reaper.common.block.ReaperGeneratorData;
+import earth.terrarium.reaper.common.block.ReaperGeneratorMenu;
 import earth.terrarium.reaper.common.registry.ReaperRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -210,17 +212,17 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
 
     @Override
     public void writeExtraData(ServerPlayer player, FriendlyByteBuf buffer) {
-        
+
     }
 
     @Override
     public Component getDisplayName() {
-        return null;
+        return Component.literal("Reaper Generator");
     }
 
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
-        return null;
+        return new ReaperGeneratorMenu(this.itemContainer, new ReaperGeneratorData(this), i, inventory);
     }
 }

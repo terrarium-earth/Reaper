@@ -17,7 +17,9 @@ import net.minecraft.network.protocol.game.ClientboundServerDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,6 +34,7 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -57,7 +60,19 @@ public class ReaperBeaconBlockEntity extends BlockEntity implements EnergyBlock,
     }
 
     public void tick() {
-        // nothing
+        AABB box = new AABB(this.getBlockPos()).inflate(5);
+        if(level instanceof ServerLevel serverLevel) {
+            List<Entity> entities = new ArrayList<>(this.level.getEntitiesOfClass(LivingEntity.class, box));
+            entities.addAll(this.level.getEntitiesOfClass(Player.class, box));
+
+            for (Entity entity : entities) {
+                if(entity instanceof LivingEntity livingEntity) {
+
+                } else if(entity instanceof Player player) {
+
+                }
+            }
+        }
     }
 
     @Override
