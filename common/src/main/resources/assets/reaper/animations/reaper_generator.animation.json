@@ -1,9 +1,9 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"animation.reaper_generator.slam": {
+		"slam": {
 			"loop": true,
-			"animation_length": 2.08333,
+			"animation_length": 2,
 			"bones": {
 				"head": {
 					"rotation": {
@@ -223,16 +223,6 @@
 							"easing": "easeInOutBounce",
 							"easingArgs": [0.1]
 						}
-					}
-				}
-			}
-		},
-		"animation.reaper_generator.idle": {
-			"loop": true,
-			"bones": {
-				"Squishywasherelmao": {
-					"scale": {
-						"vector": [0.9, 1, 0.9]
 					}
 				}
 			}

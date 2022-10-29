@@ -51,25 +51,6 @@
 							}
 						}
 					]
-				},
-				{
-					"name": "Squishywasherelmao",
-					"parent": "head",
-					"pivot": [0, 8, 0],
-					"cubes": [
-						{
-							"origin": [-6.025, 8, -6.025],
-							"size": [12.05, 11, 12.05],
-							"uv": {
-								"north": {"uv": [56, 8], "uv_size": [12, 11]},
-								"east": {"uv": [56, 8], "uv_size": [12, 11]},
-								"south": {"uv": [56, 8], "uv_size": [12, 11]},
-								"west": {"uv": [56, 8], "uv_size": [12, 11]},
-								"up": {"uv": [56.5, 19.5], "uv_size": [0, 0]},
-								"down": {"uv": [56.5, 19.5], "uv_size": [0, 0]}
-							}
-						}
-					]
 				}
 			]
 		}

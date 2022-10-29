@@ -3,18 +3,40 @@ package earth.terrarium.reaper.common.block;
 import earth.terrarium.reaper.common.blockentity.ReaperGeneratorBlockEntity;
 import earth.terrarium.reaper.common.registry.ReaperRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class ReaperGeneratorBlock extends BaseEntityBlock {
+    public static final VoxelShape SHAPE = box(0, 0, 0, 16, 8, 16);
 
     public ReaperGeneratorBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+        if(level.isClientSide) {
+            if(level.getBlockEntity(blockPos) instanceof ReaperGeneratorBlockEntity reaper) {
+                int cooldown = reaper.cooldown;
+                player.displayClientMessage(Component.literal("Cooldown: " + cooldown), true);
+            }
+            return InteractionResult.SUCCESS;
+        } else {
+            return InteractionResult.PASS;
+        }
     }
 
     @Nullable
@@ -27,5 +49,10 @@ public class ReaperGeneratorBlock extends BaseEntityBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
         return createTickerHelper(blockEntityType, ReaperRegistry.REAPER_GEN_BLOCK_ENTITY.get(), (level1, blockPos, blockState1, blockEntity) -> ((ReaperGeneratorBlockEntity) blockEntity).tick());
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext collisionContext) {
+        return SHAPE;
     }
 }

@@ -1,0 +1,8 @@
+{
+  "block.reaper.slam": {
+    "sounds": [
+      "reaper:reaper_generator"
+    ],
+    "subtitle": "subtitles.reaper.block.reaper_generator.slam"
+  }
+}

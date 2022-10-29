@@ -1,13 +1,21 @@
 package earth.terrarium.reaper.common.blockentity;
 
-import earth.terrarium.botarium.api.energy.EnergyBlock;
-import earth.terrarium.botarium.api.energy.ExtractOnlyEnergyContainer;
-import earth.terrarium.botarium.api.energy.StatefulEnergyContainer;
+import earth.terrarium.botarium.api.energy.*;
+import earth.terrarium.botarium.api.item.ItemContainerBlock;
+import earth.terrarium.botarium.api.item.SerializbleContainer;
+import earth.terrarium.botarium.api.item.SimpleItemContainer;
 import earth.terrarium.reaper.common.registry.ReaperRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
+import net.minecraft.network.protocol.game.ClientboundServerDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Block;
@@ -15,6 +23,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -23,15 +32,19 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
+import java.util.Arrays;
 import java.util.List;
 
-public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlock, IAnimatable {
+public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlock, ItemContainerBlock, IAnimatable {
     private ExtractOnlyEnergyContainer energyContainer;
+    private SimpleItemContainer itemContainer;
     private final AnimationFactory factory = new AnimationFactory(this);
+
+    private final List<Direction> DIRECTIONS = Arrays.stream(Direction.values()).toList();
 
     public double distance;
     private int hurtMobData;
-    private int cooldown = 0;
+    public int cooldown = 100;
     private int animationTick = 0;
 
     public ReaperGeneratorBlockEntity(BlockPos blockPos, BlockState blockState) {
@@ -40,34 +53,43 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
 
     @Override
     public StatefulEnergyContainer getEnergyStorage() {
-        return energyContainer == null ? energyContainer = new ExtractOnlyEnergyContainer(this, 1000) : energyContainer;
+        return energyContainer == null ? energyContainer = new ExtractOnlyEnergyContainer(this, 1000000) : energyContainer;
     }
 
     public void tick() {
         if (level instanceof ServerLevel serverLevel) {
-            if (hurtMobData > 0) {
-                serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, worldPosition.getX() + 0.5, worldPosition.getY() + 0.3, worldPosition.getZ() + 0.5, 1, 0.3, 0.0, 0.3, 0.001);
-                serverLevel.sendParticles(ParticleTypes.SOUL, worldPosition.getX() + 0.5, worldPosition.getY() + 0.3, worldPosition.getZ() + 0.5, 1, 0.3, 0.0, 0.3, 0.001);
+            if(this.getEnergyStorage().extractEnergy(1, true) == 1) {
+                for (Direction direction : DIRECTIONS) {
+                    BlockEntity potentialEnergy = level.getBlockEntity(worldPosition.relative(direction));
+                    if(potentialEnergy != null) {
+                        var energyManager = EnergyHooks.safeGetBlockEnergyManager(potentialEnergy, direction);
+                        energyManager.ifPresent(energy -> {
+                            var amountExtracted = this.getEnergyStorage().extractEnergy(this.getEnergyStorage().getMaxCapacity(), true);
+                            var amountInserted = energy.insert(amountExtracted, false);
+                            this.getEnergyStorage().extractEnergy(amountInserted, false);
+                        });
+                    }
+                }
             }
             if (distance < getMaxRange() && cooldown == 0) {
-                animationTick = 0;
-                this.setChanged();
-                distance += 0.4;
+                if(distance == 0) {
+                    serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, worldPosition.getX() + 0.5, worldPosition.getY() + 0.3, worldPosition.getZ() + 0.5, 15, 0.4, .75, 0.4, 0.1);
+                }
+                distance += 0.5 ;
                 double percent = distance / getMaxRange();
-                for (double i = 0; i < 2 * Math.PI; i += .4 * (1 - (percent * .5))) {
+                for (double i = 0; i < 2 * Math.PI; i += .3 * (1 - (percent * .5))) {
                     double size = getMaxRange() * percent;
                     double x = this.getBlockPos().getX() + 0.5;
                     double z = this.getBlockPos().getZ() + 0.5;
-                    double disperse = 0.003;
-                    serverLevel.sendParticles(ParticleTypes.CRIT, x + size * Math.cos(i), this.getBlockPos().getY() + 0.5, z + size * Math.sin(i), 1, 0.01, 0.01, 0.01, disperse);
-                    //serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, x + size * Math.cos(i), this.getBlockPos().getY() + 0.5, z + size * Math.sin(i), 1, 0.01, 0.01, 0.01, disperse);
+                    serverLevel.sendParticles(ParticleTypes.CRIT, x + size * Math.cos(i), this.getBlockPos().getY() + 0.5, z + size * Math.sin(i), 1, 0.1, 0.1, 0.1, 0.1);
                 }
                 List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(getBlockPos()).inflate(5));
                 for (LivingEntity entity : entities) {
                     if (isInRange(entity, distance)) {
                         boolean hurt = entity.hurt(DamageSource.ANVIL, getDamage());
                         if (hurt) {
-                            hurtMobData += 100;
+                            this.getEnergyStorage();
+                            this.energyContainer.internalInsert(15000, false);
                             for (double mobDis = 0; mobDis < 1; mobDis += .2) {
                                 entity.setDeltaMovement(entity.getDeltaMovement().add(0, .065, 0));
                                 double x = this.getBlockPos().getX() + 0.5 - entity.getX();
@@ -80,18 +102,28 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
                     }
                 }
             } else {
-                if (hurtMobData > 0) {
-                    hurtMobData--;
-                    this.getEnergyStorage();
-                    this.energyContainer.insertEnergy(30, false);
-                } else if (cooldown == 0) {
+                if (cooldown == 0) {
                     distance = 0;
                     cooldown = 100;
+                    this.update();
                 }
-                if (cooldown > 0) cooldown--;
-                if (cooldown > 63) {
+                if (cooldown > 0) {
+                    cooldown--;
+                    this.update();
+                    if(cooldown == 36) {
+                        level.playSound(null, worldPosition, ReaperRegistry.REAPER_GEN_SOUND.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+                    }
+                }
+            }
+        } else {
+            if(level == null) return;
+            if (cooldown < 36) {
+                animationTick++;
+            } else {
+                if(animationTick > 36 && animationTick < 60) {
                     animationTick++;
-                    this.setChanged();
+                } else {
+                    animationTick = 0;
                 }
             }
         }
@@ -100,13 +132,13 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
     @Override
     public void load(@NotNull CompoundTag compoundTag) {
         super.load(compoundTag);
-        this.animationTick = compoundTag.getInt("AnimationTick");
+        this.cooldown = compoundTag.getInt("Cooldown");
     }
 
     @Override
     protected void saveAdditional(@NotNull CompoundTag compoundTag) {
         super.saveAdditional(compoundTag);
-        compoundTag.putInt("AnimationTick", animationTick);
+        compoundTag.putInt("Cooldown", cooldown);
     }
 
     public boolean isInRange(LivingEntity entity, double distance) {
@@ -121,7 +153,7 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
     }
 
     public float getDamage() {
-        return 1.5F;
+        return 5.5F;
     }
 
     public int getEnergyGeneration() {
@@ -131,11 +163,18 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
     @Override
     public void update() {
         this.setChanged();
+        if (level != null) level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
     }
 
     @Override
     public CompoundTag getUpdateTag() {
         return this.saveWithoutMetadata();
+    }
+
+    @Nullable
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
@@ -145,17 +184,20 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
 
     public PlayState idle(AnimationEvent<ReaperGeneratorBlockEntity> event) {
         if (this.animationTick > 0) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.reaper_generator.slam").addAnimation("animation.reaper_generator.idle", true));
-            return PlayState.CONTINUE;
-        } else {
-            event.getController().markNeedsReload();
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.reaper_generator.idle", true));
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("slam", false));
             return PlayState.CONTINUE;
         }
+        event.getController().markNeedsReload();
+        return PlayState.STOP;
     }
 
     @Override
     public AnimationFactory getFactory() {
         return factory;
+    }
+
+    @Override
+    public SerializbleContainer getContainer() {
+        return this.itemContainer == null ? this.itemContainer = new SimpleItemContainer(this, 1) : this.itemContainer;
     }
 }
