@@ -4,10 +4,12 @@ import earth.terrarium.botarium.api.registry.RegistryHelpers;
 import earth.terrarium.botarium.api.registry.RegistryHolder;
 import earth.terrarium.reaper.Reaper;
 import earth.terrarium.reaper.common.block.ReaperGeneratorBlock;
+import earth.terrarium.reaper.common.block.ReaperGeneratorMenu;
 import earth.terrarium.reaper.common.blockentity.ReaperGeneratorBlockEntity;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -24,10 +26,14 @@ public class ReaperRegistry {
     //registry holder of sound events
     public static final RegistryHolder<SoundEvent> SOUNDS = new RegistryHolder<>(Registry.SOUND_EVENT, Reaper.MOD_ID);
 
+    public static final RegistryHolder<MenuType<?>> MENUS = new RegistryHolder<>(Registry.MENU, Reaper.MOD_ID);
+
     public static final Supplier<Block> REAPER_GEN_BLOCK = registerBlockWithItem("reaper_generator", () -> new ReaperGeneratorBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).noOcclusion()));
     public static final Supplier<BlockEntityType<?>> REAPER_GEN_BLOCK_ENTITY = BLOCK_ENTITIES.register("reaper_generator", () -> RegistryHelpers.createBlockEntityType(ReaperGeneratorBlockEntity::new, REAPER_GEN_BLOCK.get()));
 
     public static final Supplier<SoundEvent> REAPER_GEN_SOUND = SOUNDS.register("block.reaper.slam", () -> new SoundEvent(new ResourceLocation(Reaper.MOD_ID, "block.reaper.slam")));
+
+    public static final Supplier<MenuType<ReaperGeneratorMenu>> REAPER_GEN_MENU = MENUS.register("reaper_generator_menu", () -> RegistryHelpers.createMenuType(ReaperGeneratorMenu::new));
 
     public static Supplier<Block> registerBlockWithItem(String name, Supplier<Block> block) {
         var blockRegistry = BLOCKS.register(name, block);

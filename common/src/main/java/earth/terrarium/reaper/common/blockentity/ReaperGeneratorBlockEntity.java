@@ -4,20 +4,27 @@ import earth.terrarium.botarium.api.energy.*;
 import earth.terrarium.botarium.api.item.ItemContainerBlock;
 import earth.terrarium.botarium.api.item.SerializbleContainer;
 import earth.terrarium.botarium.api.item.SimpleItemContainer;
+import earth.terrarium.botarium.api.menu.ExtraDataMenuProvider;
 import earth.terrarium.reaper.common.registry.ReaperRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundServerDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -35,7 +42,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 import java.util.Arrays;
 import java.util.List;
 
-public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlock, ItemContainerBlock, IAnimatable {
+public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlock, ItemContainerBlock, IAnimatable, ExtraDataMenuProvider {
     private ExtractOnlyEnergyContainer energyContainer;
     private SimpleItemContainer itemContainer;
     private final AnimationFactory factory = new AnimationFactory(this);
@@ -198,6 +205,22 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
 
     @Override
     public SerializbleContainer getContainer() {
-        return this.itemContainer == null ? this.itemContainer = new SimpleItemContainer(this, 1) : this.itemContainer;
+        return this.itemContainer == null ? this.itemContainer = new SimpleItemContainer(this, 8) : this.itemContainer;
+    }
+
+    @Override
+    public void writeExtraData(ServerPlayer player, FriendlyByteBuf buffer) {
+        
+    }
+
+    @Override
+    public Component getDisplayName() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
+        return null;
     }
 }
