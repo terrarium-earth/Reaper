@@ -57,7 +57,7 @@ public class ReaperBeaconBlockEntity extends BlockEntity implements EnergyBlock,
     }
 
     public void tick() {
-        // nothin
+        // nothing
     }
 
     @Override
