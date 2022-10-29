@@ -45,10 +45,13 @@ public class ReaperBeaconBlockEntity extends BlockEntity implements EnergyBlock,
 
     private final List<Direction> DIRECTIONS = Arrays.stream(Direction.values()).toList();
 
+    private final int energyCapacity = 1000000;
+
     public double distance;
-    private int hurtMobData;
-    public int cooldown = 100;
+    private int timer = 0;
     private int animationTick = 0;
+    /** Half of box side length for beacon effects range */
+    private int boxRadius = 5;
 
     public ReaperBeaconBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(ReaperRegistry.REAPER_GEN_BLOCK_ENTITY.get(), blockPos, blockState);
@@ -56,20 +59,21 @@ public class ReaperBeaconBlockEntity extends BlockEntity implements EnergyBlock,
 
     @Override
     public StatefulEnergyContainer getEnergyStorage() {
-        return energyContainer == null ? energyContainer = new ExtractOnlyEnergyContainer(this, 1000000) : energyContainer;
+        return energyContainer == null ? energyContainer = new ExtractOnlyEnergyContainer(this, energyCapacity) : energyContainer;
     }
 
     public void tick() {
-        AABB box = new AABB(this.getBlockPos()).inflate(5);
-        if(level instanceof ServerLevel serverLevel) {
-            List<Entity> entities = new ArrayList<>(this.level.getEntitiesOfClass(LivingEntity.class, box));
-            entities.addAll(this.level.getEntitiesOfClass(Player.class, box));
-
-            for (Entity entity : entities) {
-                if(entity instanceof LivingEntity livingEntity) {
-
-                } else if(entity instanceof Player player) {
-
+        if (timer++ % 20 == 0) {
+            AABB box = new AABB(this.getBlockPos()).inflate(boxRadius);
+            if(level instanceof ServerLevel serverLevel) {
+                List<Entity> entities = new ArrayList<>(this.level.getEntitiesOfClass(LivingEntity.class, box));
+                entities.addAll(this.level.getEntitiesOfClass(Player.class, box));
+                for (Entity entity : entities) {
+                    if(entity instanceof LivingEntity livingEntity) {
+                        // if hasMobUpgrade
+                    } else if(entity instanceof Player player) {
+                        // player.addEffect();
+                    }
                 }
             }
         }
@@ -78,13 +82,11 @@ public class ReaperBeaconBlockEntity extends BlockEntity implements EnergyBlock,
     @Override
     public void load(@NotNull CompoundTag compoundTag) {
         super.load(compoundTag);
-        this.cooldown = compoundTag.getInt("Cooldown");
     }
 
     @Override
     protected void saveAdditional(@NotNull CompoundTag compoundTag) {
         super.saveAdditional(compoundTag);
-        compoundTag.putInt("Cooldown", cooldown);
     }
 
     public boolean isInRange(LivingEntity entity, double distance) {
@@ -94,12 +96,8 @@ public class ReaperBeaconBlockEntity extends BlockEntity implements EnergyBlock,
         return sqrt < distance && sqrt > distance - 1987;
     }
 
-    public int getMaxRange() {
-        return 5;
-    }
-
-    public int getEnergyGeneration() {
-        return 30;
+    public int getBeaconRange() {
+        return boxRadius;
     }
 
     @Override
