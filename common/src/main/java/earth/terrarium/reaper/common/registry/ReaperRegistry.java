@@ -9,6 +9,7 @@ import earth.terrarium.reaper.common.blockentity.ReaperGeneratorBlockEntity;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -35,6 +36,8 @@ public class ReaperRegistry {
     public static final Supplier<SoundEvent> REAPER_GEN_SOUND = SOUNDS.register("block.reaper.slam", () -> new SoundEvent(new ResourceLocation(Reaper.MOD_ID, "block.reaper.slam")));
 
     public static final Supplier<MenuType<ReaperGeneratorMenu>> REAPER_GEN_MENU = MENUS.register("reaper_generator_menu", () -> RegistryHelpers.createMenuType(ReaperGeneratorMenu::new));
+
+    public static final DamageSource REAPER_DAMAGE = new DamageSource("reaper").bypassArmor().bypassEnchantments().setMagic().setNoAggro();
 
     public static Supplier<Block> registerBlockWithItem(String name, Supplier<Block> block) {
         var blockRegistry = BLOCKS.register(name, block);

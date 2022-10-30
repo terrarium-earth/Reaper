@@ -82,7 +82,7 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
             }
             if (distance < getMaxRange() && cooldown == 0) {
                 if(distance == 0) {
-                    serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, worldPosition.getX() + 0.5, worldPosition.getY() + 0.3, worldPosition.getZ() + 0.5, 15, 0.4, .75, 0.4, 0.1);
+                    serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK., worldPosition.getX() + 0.5, worldPosition.getY() + 0.3, worldPosition.getZ() + 0.5, 15, 0.4, .75, 0.4, 0.1);
                 }
                 distance += 0.5 ;
                 double percent = distance / getMaxRange();
@@ -95,7 +95,7 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
                 List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(getBlockPos()).inflate(5));
                 for (LivingEntity entity : entities) {
                     if (isInRange(entity, distance)) {
-                        boolean hurt = entity.hurt(DamageSource.ANVIL, getDamage());
+                        boolean hurt = entity.hurt(ReaperRegistry.REAPER_DAMAGE, getDamage());
                         if (hurt) {
                             this.getEnergyStorage();
                             this.energyContainer.internalInsert(15000, false);
