@@ -7,16 +7,13 @@ import earth.terrarium.botarium.api.item.SimpleItemContainer;
 import earth.terrarium.reaper.common.registry.ReaperRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
-import net.minecraft.network.protocol.game.ClientboundServerDataPacket;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -45,7 +42,7 @@ public class ReaperBeaconBlockEntity extends BlockEntity implements EnergyBlock,
 
     private final List<Direction> DIRECTIONS = Arrays.stream(Direction.values()).toList();
 
-    private final int energyCapacity = 1000000;
+    private final int ENERGY_CAPACITY = 1000000;
 
     public double distance;
     private int timer = 0;
@@ -53,26 +50,26 @@ public class ReaperBeaconBlockEntity extends BlockEntity implements EnergyBlock,
     /** Half of box side length for beacon effects range */
     private int boxRadius = 5;
 
+    private boolean hasMobUpgrade = false;
+
     public ReaperBeaconBlockEntity(BlockPos blockPos, BlockState blockState) {
-        super(ReaperRegistry.REAPER_GEN_BLOCK_ENTITY.get(), blockPos, blockState);
+        super(ReaperRegistry.REAPER_BEACON_BLOCK_ENTITY.get(), blockPos, blockState);
     }
 
     @Override
     public StatefulEnergyContainer getEnergyStorage() {
-        return energyContainer == null ? energyContainer = new ExtractOnlyEnergyContainer(this, energyCapacity) : energyContainer;
+        return energyContainer == null ? energyContainer = new ExtractOnlyEnergyContainer(this, ENERGY_CAPACITY) : energyContainer;
     }
 
     public void tick() {
         if (timer++ % 20 == 0) {
             AABB box = new AABB(this.getBlockPos()).inflate(boxRadius);
             if(level instanceof ServerLevel serverLevel) {
-                List<Entity> entities = new ArrayList<>(this.level.getEntitiesOfClass(LivingEntity.class, box));
-                entities.addAll(this.level.getEntitiesOfClass(Player.class, box));
-                for (Entity entity : entities) {
+                for (Entity entity : this.level.getEntitiesOfClass(LivingEntity.class, box)) {
                     if(entity instanceof LivingEntity livingEntity) {
-                        // if hasMobUpgrade
-                    } else if(entity instanceof Player player) {
-                        // player.addEffect();
+                        if (hasMobUpgrade || livingEntity instanceof Player) {
+                            livingEntity.addEffect(new MobEffectInstance(MobEffects.HARM, 1)); //placeholder effect TODO: add Spirit to dependencies
+                        }
                     }
                 }
             }
