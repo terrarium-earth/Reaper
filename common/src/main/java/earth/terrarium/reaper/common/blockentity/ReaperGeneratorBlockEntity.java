@@ -84,7 +84,7 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
                 if(distance == 0) {
                     serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK., worldPosition.getX() + 0.5, worldPosition.getY() + 0.3, worldPosition.getZ() + 0.5, 15, 0.4, .75, 0.4, 0.1);
                 }
-                distance += 0.5 ;
+                distance += 0.49 ;
                 double percent = distance / getMaxRange();
                 for (double i = 0; i < 2 * Math.PI; i += .3 * (1 - (percent * .5))) {
                     double size = getMaxRange() * percent;
