@@ -1,9 +1,11 @@
 package earth.terrarium.reaper.common.block;
 
+import earth.terrarium.botarium.api.menu.MenuHooks;
 import earth.terrarium.reaper.common.blockentity.ReaperGeneratorBlockEntity;
 import earth.terrarium.reaper.common.registry.ReaperRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -28,15 +30,13 @@ public class ReaperGeneratorBlock extends BaseEntityBlock {
 
     @Override
     public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
-        if(level.isClientSide) {
-            if(level.getBlockEntity(blockPos) instanceof ReaperGeneratorBlockEntity reaper) {
-                int cooldown = reaper.cooldown;
-                player.displayClientMessage(Component.literal("Cooldown: " + cooldown), true);
-            }
+        if (level.isClientSide) {
             return InteractionResult.SUCCESS;
-        } else {
-            return InteractionResult.PASS;
+        } else if (level.getBlockEntity(blockPos) instanceof ReaperGeneratorBlockEntity blockEntity) {
+            MenuHooks.openMenu((ServerPlayer) player, blockEntity);
+            return InteractionResult.CONSUME;
         }
+        return InteractionResult.PASS;
     }
 
     @Nullable

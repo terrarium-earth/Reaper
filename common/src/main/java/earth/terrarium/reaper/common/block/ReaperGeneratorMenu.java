@@ -20,6 +20,14 @@ public class ReaperGeneratorMenu extends AbstractContainerMenu {
         super(ReaperRegistry.REAPER_GEN_MENU.get(), i);
         this.inventory = container;
         this.data = data;
+        addPlayerInvSlots(inventory);
+        int slot = 0;
+        for (int x : new int[]{96, 152}) {
+            for (int y = 0; y < 4; y++) {
+                this.addSlot(new Slot(container, slot, x, 17 + y * 18));
+                slot++;
+            }
+        }
     }
 
     public ReaperGeneratorMenu(int syncId, Inventory inventory, FriendlyByteBuf byteBuf) {
@@ -33,7 +41,7 @@ public class ReaperGeneratorMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return false;
+        return true;
     }
 
     protected void addPlayerInvSlots(Inventory inventory) {

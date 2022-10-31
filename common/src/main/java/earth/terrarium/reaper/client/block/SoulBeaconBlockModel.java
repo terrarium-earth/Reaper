@@ -1,6 +1,7 @@
 package earth.terrarium.reaper.client.block;
 
 import earth.terrarium.reaper.Reaper;
+import earth.terrarium.reaper.common.blockentity.ReaperGeneratorBlockEntity;
 import earth.terrarium.reaper.common.blockentity.SoulBeaconBlockEntity;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.model.AnimatedGeoModel;

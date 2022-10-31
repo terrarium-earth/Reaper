@@ -60,7 +60,7 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
     }
 
     @Override
-    public StatefulEnergyContainer getEnergyStorage() {
+    public ExtractOnlyEnergyContainer getEnergyStorage() {
         return energyContainer == null ? energyContainer = new ExtractOnlyEnergyContainer(this, 1000000) : energyContainer;
     }
 
@@ -84,18 +84,28 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
                 List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(getBlockPos()).inflate(5));
                 for (LivingEntity entity : entities) {
                     if (isInRange(entity, distance)) {
+                        double healthBefore = entity.getHealth();
+                        double entityX = entity.getX();
+                        double entityY = entity.getY();
+                        double entityZ = entity.getZ();
                         boolean hurt = entity.hurt(ReaperRegistry.REAPER_DAMAGE, getDamage());
                         if (hurt) {
-                            this.getEnergyStorage();
-                            this.energyContainer.internalInsert(15000, false);
+                            double healthLost = healthBefore - entity.getHealth();
+                            boolean kills = this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.RUNE_INSTADEATH.get()));
+                            if(kills) {
+                                serverLevel.sendParticles(ParticleTypes.DRIPPING_OBSIDIAN_TEAR, entityX, entityY, entityZ, 5, 0.1, 0.1, 0.1, 0.1);
+                                entity.kill();
+                                healthLost = healthBefore;
+                            }
+                            this.getEnergyStorage().internalInsert((int) (healthLost * 100), false);
                             for (double mobDis = 0; mobDis < 1; mobDis += .2) {
-                                entity.setDeltaMovement(entity.getDeltaMovement().add(0, .065, 0));
-                                double x = this.getBlockPos().getX() + 0.5 - entity.getX();
-                                double y = this.getBlockPos().getY() + 0.5 - entity.getY();
-                                double z = this.getBlockPos().getZ() + 0.5 - entity.getZ();
+                                if(!kills) entity.setDeltaMovement(entity.getDeltaMovement().add(0, .065, 0));
+                                double x = this.getBlockPos().getX() + 0.5 - entityX;
+                                double y = this.getBlockPos().getY() + 0.5 - entityY;
+                                double z = this.getBlockPos().getZ() + 0.5 - entityZ;
                                 serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, this.getBlockPos().getX() + 0.5 - x * mobDis, this.getBlockPos().getY() + 0.75 - y * mobDis, this.getBlockPos().getZ() + 0.5 - z * mobDis, 5, 0.01, 0.01, 0.01, 0.005);
                             }
-                            serverLevel.sendParticles(ParticleTypes.SOUL, entity.getX(), entity.getY() + 0.5, entity.getZ(), 10, 0.5, .5, 0.5, 0.05);
+                            serverLevel.sendParticles(ParticleTypes.SOUL, entityX, entityY + 0.5, entityZ, 10, 0.5, .5, 0.5, 0.05);
                         }
                     }
                 }
@@ -150,12 +160,12 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
         return 5;
     }
 
-    public float getDamage() {
-        return 5.5F;
+    public int getDamage() {
+        return this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.RUNE_INSTADEATH.get())) ? -1 : 5;
     }
 
     public int getEnergyGeneration() {
-        return 30;
+        return 100;
     }
 
     @Override
@@ -213,5 +223,9 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
     @Override
     public AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
         return new ReaperGeneratorMenu(this.itemContainer, new ReaperGeneratorData(this), i, inventory);
+    }
+
+    public int getMaxCooldown() {
+        return this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.RUNE_SPEED.get())) ? 75 : 100;
     }
 }

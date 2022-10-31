@@ -1,4 +1,4 @@
-package earth.terrarium.reaper.common.block;
+package earth.terrarium.reaper.client.block;
 
 import earth.terrarium.reaper.Reaper;
 import earth.terrarium.reaper.common.blockentity.ReaperGeneratorBlockEntity;

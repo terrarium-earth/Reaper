@@ -1,5 +1,6 @@
 package earth.terrarium.reaper.client.fabric;
 
+import earth.terrarium.reaper.client.ReaperClient;
 import earth.terrarium.reaper.common.registry.ReaperRegistry;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -10,6 +11,7 @@ public class ReaperClientImpl implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        ReaperClient.init();
         BlockRenderLayerMap.INSTANCE.putBlock(ReaperRegistry.REAPER_GEN_BLOCK.get(), RenderType.translucent());
         BlockEntityRendererRegistry.register(ReaperRegistry.REAPER_GEN_BLOCK_ENTITY.get(), context -> new ReaperGeneratorRenderer());
         BlockEntityRendererRegistry.register(ReaperRegistry.SOUL_BEACON_BLOCK_ENTITY.get(), context -> new SoulBeaconRenderer());
