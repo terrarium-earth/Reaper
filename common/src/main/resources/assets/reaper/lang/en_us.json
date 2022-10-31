@@ -1,4 +1,6 @@
 {
   "death.attack.reaper.player": "%1$s's soul was ripped from their body by the Reaper",
-  "death.attack.reaper": "%1$s's soul was ripped from their body by the Reaper"
+  "death.attack.reaper": "%1$s's soul was ripped from their body by the Reaper",
+  "block.reaper.reaper_generator": "Reaper Generator",
+  "block.reaper.soul_beacon": "Soul Beacon"
 }

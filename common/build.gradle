@@ -5,6 +5,7 @@ dependencies {
     modImplementation "com.teamresourceful.resourcefullib:resourcefullib-common-$rootProject.resourcefullib_version"
     modImplementation "software.bernie.geckolib:geckolib-fabric-1.19:${geckolib_fabric_version}"
     modImplementation "earth.terrarium:botarium-common-${minecraft_version}:${botarium_version}"
+    modImplementation "me.codexadrian.spirit:spirit-common-1.19.2:${rootProject.spirit_version}"
 }
 
 architectury {

@@ -1,8 +1,11 @@
 package earth.terrarium.reaper.common.blockentity;
 
-import earth.terrarium.botarium.api.energy.*;
+import earth.terrarium.botarium.api.energy.EnergyBlock;
+import earth.terrarium.botarium.api.energy.EnergyHooks;
+import earth.terrarium.botarium.api.energy.ExtractOnlyEnergyContainer;
+import earth.terrarium.botarium.api.energy.StatefulEnergyContainer;
 import earth.terrarium.botarium.api.item.ItemContainerBlock;
-import earth.terrarium.botarium.api.item.SerializbleContainer;
+import earth.terrarium.botarium.api.item.SerializableContainer;
 import earth.terrarium.botarium.api.item.SimpleItemContainer;
 import earth.terrarium.botarium.api.menu.ExtraDataMenuProvider;
 import earth.terrarium.reaper.common.block.ReaperGeneratorData;
@@ -17,12 +20,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
-import net.minecraft.network.protocol.game.ClientboundServerDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -52,7 +52,6 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
     private final List<Direction> DIRECTIONS = Arrays.stream(Direction.values()).toList();
 
     public double distance;
-    private int hurtMobData;
     public int cooldown = 100;
     private int animationTick = 0;
 
@@ -68,17 +67,7 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
     public void tick() {
         if (level instanceof ServerLevel serverLevel) {
             if(this.getEnergyStorage().extractEnergy(1, true) == 1) {
-                for (Direction direction : DIRECTIONS) {
-                    BlockEntity potentialEnergy = level.getBlockEntity(worldPosition.relative(direction));
-                    if(potentialEnergy != null) {
-                        var energyManager = EnergyHooks.safeGetBlockEnergyManager(potentialEnergy, direction);
-                        energyManager.ifPresent(energy -> {
-                            var amountExtracted = this.getEnergyStorage().extractEnergy(this.getEnergyStorage().getMaxCapacity(), true);
-                            var amountInserted = energy.insert(amountExtracted, false);
-                            this.getEnergyStorage().extractEnergy(amountInserted, false);
-                        });
-                    }
-                }
+                EnergyHooks.distributeEnergyNearby(this);
             }
             if (distance < getMaxRange() && cooldown == 0) {
                 if(distance == 0) {
@@ -206,7 +195,7 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
     }
 
     @Override
-    public SerializbleContainer getContainer() {
+    public SerializableContainer getContainer() {
         return this.itemContainer == null ? this.itemContainer = new SimpleItemContainer(this, 8) : this.itemContainer;
     }
 

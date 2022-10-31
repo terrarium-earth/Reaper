@@ -21,7 +21,7 @@ dependencies {
     include modApi("com.teamresourceful.resourcefullib:resourcefullib-fabric-$rootProject.resourcefullib_version")
     include modApi("earth.terrarium:botarium-fabric-${minecraft_version}:${botarium_version}")
     modImplementation "software.bernie.geckolib:geckolib-fabric-1.19:${geckolib_fabric_version}"
-
+    modImplementation("me.codexadrian.spirit:spirit-fabric-1.19.2:${rootProject.spirit_version}") {transitive = false}
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }

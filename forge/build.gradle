@@ -19,6 +19,7 @@ dependencies {
     include modApi("com.teamresourceful.resourcefullib:resourcefullib-forge-$rootProject.resourcefullib_version")
     include modApi("earth.terrarium:botarium-forge-${minecraft_version}:${botarium_version}")
     modImplementation "software.bernie.geckolib:geckolib-forge-1.19:${geckolib_forge_version}"
+    modImplementation("me.codexadrian.spirit:spirit-forge-1.19.2:${rootProject.spirit_version}") {transitive = false}
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }

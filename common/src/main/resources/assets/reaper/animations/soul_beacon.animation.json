@@ -1,0 +1,129 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"active": {
+			"loop": true,
+			"animation_length": 3,
+			"bones": {
+				"head": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"3.0": {
+							"vector": ["360*2", 0, "360*2"]
+						}
+					}
+				},
+				"midring": {
+					"rotation": {
+						"0.0": {
+							"vector": [18.09, 0, -18.09],
+							"easing": "easeInSine"
+						},
+						"0.1667": {
+							"vector": [0, 0, 0],
+							"easing": "easeOutSine"
+						},
+						"1.1667": {
+							"vector": [0, -180, -180],
+							"easing": "easeInOutSine"
+						},
+						"2.1667": {
+							"vector": [270, 0, -270],
+							"easing": "easeInOutSine"
+						},
+						"3.0": {
+							"vector": [18.09, 0, -18.09],
+							"easing": "easeInSine"
+						}
+					}
+				},
+				"innerring": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"1.0": {
+							"vector": [0, -180, -180],
+							"easing": "easeInOutSine"
+						},
+						"2.0": {
+							"vector": [270, 0, -270],
+							"easing": "easeInOutSine"
+						},
+						"3.0": {
+							"vector": [0, 0, 0],
+							"easing": "easeInOutSine"
+						}
+					}
+				},
+				"outerring": {
+					"rotation": {
+						"0.0": {
+							"vector": [67.5, 0, -67.5],
+							"easing": "easeInSine"
+						},
+						"0.3333": {
+							"vector": [0, 0, 0],
+							"easing": "easeOutSine"
+						},
+						"1.3333": {
+							"vector": [0, -180, -180],
+							"easing": "easeInOutSine"
+						},
+						"2.3333": {
+							"vector": [270, 0, -270],
+							"easing": "easeInOutSine"
+						},
+						"3.0": {
+							"vector": [67.5, 0, -67.5],
+							"easing": "easeInSine"
+						}
+					}
+				},
+				"squishywasherelol": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"3.0": {
+							"vector": [0, "360*3", 0]
+						}
+					}
+				},
+				"squishywasherelol2": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"3.0": {
+							"vector": [0, "-360*3", 0]
+						}
+					}
+				},
+				"whoosh2": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"3.0": {
+							"vector": [0, 180, -180]
+						}
+					}
+				},
+				"whoosh": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"3.0": {
+							"vector": [0, 180, 180]
+						}
+					}
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2
+}
