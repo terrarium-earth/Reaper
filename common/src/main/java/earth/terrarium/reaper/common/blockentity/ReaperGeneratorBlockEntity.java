@@ -3,7 +3,6 @@ package earth.terrarium.reaper.common.blockentity;
 import earth.terrarium.botarium.api.energy.EnergyBlock;
 import earth.terrarium.botarium.api.energy.EnergyHooks;
 import earth.terrarium.botarium.api.energy.ExtractOnlyEnergyContainer;
-import earth.terrarium.botarium.api.energy.StatefulEnergyContainer;
 import earth.terrarium.botarium.api.item.ItemContainerBlock;
 import earth.terrarium.botarium.api.item.SerializableContainer;
 import earth.terrarium.botarium.api.item.SimpleItemContainer;
@@ -11,6 +10,7 @@ import earth.terrarium.botarium.api.menu.ExtraDataMenuProvider;
 import earth.terrarium.reaper.common.block.ReaperGeneratorData;
 import earth.terrarium.reaper.common.block.ReaperGeneratorMenu;
 import earth.terrarium.reaper.common.registry.ReaperRegistry;
+import me.codexadrian.spirit.Corrupted;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -27,6 +27,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -71,6 +72,13 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
             }
             if (distance < getMaxRange() && cooldown == 0) {
                 if(distance == 0) {
+                    for (int i = 0; i < 4; i++) {
+                        ItemStack item = this.getContainer().getItem(0);
+                        if(item.is(ReaperRegistry.SOUL_CATALYST.get())) {
+                            item.shrink(1);
+                            break;
+                        }
+                    }
                     serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, worldPosition.getX() + 0.5, worldPosition.getY() + 0.3, worldPosition.getZ() + 0.5, 15, 0.4, .75, 0.4, 0.1);
                 }
                 distance += 0.49 ;
@@ -83,23 +91,29 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
                 }
                 List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(getBlockPos()).inflate(5));
                 for (LivingEntity entity : entities) {
+                    if (entity instanceof Player && !this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.RUNE_PLAYER.get()))) continue;
+                    if (entity instanceof Corrupted corrupted && corrupted.isCorrupted() && !this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.RUNE_SPIRIT.get()))) continue;
                     if (isInRange(entity, distance)) {
                         double healthBefore = entity.getHealth();
                         double entityX = entity.getX();
                         double entityY = entity.getY();
                         double entityZ = entity.getZ();
-                        boolean hurt = entity.hurt(ReaperRegistry.REAPER_DAMAGE, getDamage());
+                        boolean hurt;
+                        if(getDamage() > 0) {
+                            hurt = entity.hurt(ReaperRegistry.REAPER_DAMAGE, getDamage());
+                        } else {
+                            hurt = entity.hurt(ReaperRegistry.REAPER_DAMAGE, 0.5f);
+                        }
                         if (hurt) {
                             double healthLost = healthBefore - entity.getHealth();
-                            boolean kills = this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.RUNE_INSTADEATH.get()));
-                            if(kills) {
+                            if(this.getDamage() == -1) {
                                 serverLevel.sendParticles(ParticleTypes.DRIPPING_OBSIDIAN_TEAR, entityX, entityY, entityZ, 5, 0.1, 0.1, 0.1, 0.1);
                                 entity.kill();
                                 healthLost = healthBefore;
                             }
-                            this.getEnergyStorage().internalInsert((int) (healthLost * 100), false);
+                            this.getEnergyStorage().internalInsert((int) (healthLost * getEnergyGeneration()), false);
                             for (double mobDis = 0; mobDis < 1; mobDis += .2) {
-                                if(!kills) entity.setDeltaMovement(entity.getDeltaMovement().add(0, .065, 0));
+                                if(this.getDamage() > 0) entity.setDeltaMovement(entity.getDeltaMovement().add(0, .065, 0));
                                 double x = this.getBlockPos().getX() + 0.5 - entityX;
                                 double y = this.getBlockPos().getY() + 0.5 - entityY;
                                 double z = this.getBlockPos().getZ() + 0.5 - entityZ;
@@ -112,10 +126,10 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
             } else {
                 if (cooldown == 0) {
                     distance = 0;
-                    cooldown = 100;
+                    cooldown = getMaxCooldown();
                     this.update();
                 }
-                if (cooldown > 0) {
+                if (cooldown > 0 && this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.SOUL_CATALYST.get())) && this.getEnergyStorage().internalInsert(1, true) == 1) {
                     cooldown--;
                     this.update();
                     if(cooldown == 36) {
@@ -157,7 +171,7 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
     }
 
     public int getMaxRange() {
-        return 5;
+        return this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.RUNE_RANGE.get())) ? 8 : 5;
     }
 
     public int getDamage() {
@@ -165,7 +179,7 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
     }
 
     public int getEnergyGeneration() {
-        return 100;
+        return this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.RUNE_MORE_ENERGY.get())) ? 100 : 50;
     }
 
     @Override
@@ -222,10 +236,10 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
-        return new ReaperGeneratorMenu(this.itemContainer, new ReaperGeneratorData(this), i, inventory);
+        return new ReaperGeneratorMenu(this.getContainer(), new ReaperGeneratorData(this), i, inventory);
     }
 
     public int getMaxCooldown() {
-        return this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.RUNE_SPEED.get())) ? 75 : 100;
+        return this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.RUNE_SPEED.get())) ? 60 : 120;
     }
 }

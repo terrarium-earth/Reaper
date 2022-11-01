@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "reaper:rune_reficiat",
+    "reaper:rune_obitus",
+    "reaper:rune_humano",
+    "reaper:rune_dilato",
+    "reaper:rune_velocitas",
+    "reaper:rune_spiritus"
+  ]
+}

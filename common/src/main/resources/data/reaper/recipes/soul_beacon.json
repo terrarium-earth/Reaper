@@ -1,0 +1,38 @@
+{
+  "type": "spirit:soul_engulfing",
+  "input": {
+    "ingredient": {
+      "item": "minecraft:beacon"
+    },
+    "multiblock": {
+      "pattern": [
+        [
+          "GTG",
+          "T@T",
+          "GTG"
+        ],
+        [
+          "XSX",
+          "S&S",
+          "XSX"
+        ]
+      ],
+      "keys": {
+        "S": {
+          "block": "spirit:compressed_soul_powder"
+        },
+        "X": {
+          "block": "spirit:soul_slate"
+        },
+        "G": {
+          "block": "#spirit:soul_glass"
+        },
+        "T": {
+          "block": "spirit:soul_steel_block"
+        }
+      }
+    }
+  },
+  "duration": 40,
+  "outputItem": "reaper:reaper_generator"
+}
