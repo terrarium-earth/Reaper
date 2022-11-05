@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SBS",
+    "WEW",
+    "SWS"
+  ],
+  "key": {
+    "E": {
+      "item": "minecraft:powder_snow_bucket"
+    },
+    "W": {
+      "item": "spirit:soul_steel_ingot"
+    },
+    "S": {
+      "item": "spirit:soul_slate"
+    },
+    "B": {
+      "item": "spirit:soul_glass"
+    }
+  },
+  "result": {
+    "item": "reaper:rune_block_efficacia",
+    "count": 1
+  }
+}

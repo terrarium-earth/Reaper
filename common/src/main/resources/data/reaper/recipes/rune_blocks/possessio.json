@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SBS",
+    "WEW",
+    "SWS"
+  ],
+  "key": {
+    "E": {
+      "item": "spirit:soul_steel_wand"
+    },
+    "W": {
+      "item": "spirit:soul_steel_ingot"
+    },
+    "S": {
+      "item": "spirit:soul_slate"
+    },
+    "B": {
+      "item": "spirit:soul_glass"
+    }
+  },
+  "result": {
+    "item": "reaper:rune_block_possessio",
+    "count": 1
+  }
+}

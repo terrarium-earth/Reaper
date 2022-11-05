@@ -7,9 +7,9 @@
     "multiblock": {
       "pattern": [
         [
-          "GTG",
-          "T@T",
-          "GTG"
+          "   ",
+          " @ ",
+          "   "
         ],
         [
           "XSX",
@@ -19,20 +19,14 @@
       ],
       "keys": {
         "S": {
-          "block": "spirit:compressed_soul_powder"
+          "block": "spirit:compressed_soul_powder_block"
         },
         "X": {
           "block": "spirit:soul_slate"
-        },
-        "G": {
-          "block": "#spirit:soul_glass"
-        },
-        "T": {
-          "block": "spirit:soul_steel_block"
         }
       }
     }
   },
   "duration": 40,
-  "outputItem": "reaper:reaper_generator"
+  "outputItem": "reaper:soul_beacon"
 }

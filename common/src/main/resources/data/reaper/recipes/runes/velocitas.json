@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " B ",
+    "WEW",
+    " W "
+  ],
+  "key": {
+    "E": {
+      "item": "minecraft:rabbits_foot"
+    },
+    "W": {
+      "item": "spirit:soul_slate"
+    },
+    "B": {
+      "item": "spirit:soul_steel"
+    }
+  },
+  "result": {
+    "item": "reaper:rune_velocitas",
+    "count": 1
+  }
+}

@@ -32,6 +32,10 @@ public class SelfIdentifyingRuneBlockEntity extends BlockEntity {
         return owner;
     }
 
+    public String getOwnerName() {
+        return ownerName;
+    }
+
     @Override
     protected void saveAdditional(@NotNull CompoundTag compoundTag) {
         super.saveAdditional(compoundTag);

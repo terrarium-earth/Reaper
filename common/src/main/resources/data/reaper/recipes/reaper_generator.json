@@ -19,7 +19,7 @@
       ],
       "keys": {
         "S": {
-          "block": "spirit:compressed_soul_powder"
+          "block": "spirit:compressed_soul_powder_block"
         },
         "X": {
           "block": "spirit:soul_slate"
