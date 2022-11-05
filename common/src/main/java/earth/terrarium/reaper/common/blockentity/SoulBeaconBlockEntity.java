@@ -2,7 +2,6 @@ package earth.terrarium.reaper.common.blockentity;
 
 import earth.terrarium.botarium.api.energy.EnergyBlock;
 import earth.terrarium.botarium.api.energy.InsertOnlyEnergyContainer;
-import earth.terrarium.botarium.api.energy.StatefulEnergyContainer;
 import earth.terrarium.botarium.api.item.ItemContainerBlock;
 import earth.terrarium.botarium.api.item.SerializableContainer;
 import earth.terrarium.botarium.api.item.SimpleItemContainer;

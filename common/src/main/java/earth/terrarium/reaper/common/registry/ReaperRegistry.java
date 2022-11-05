@@ -3,13 +3,13 @@ package earth.terrarium.reaper.common.registry;
 import earth.terrarium.botarium.api.registry.RegistryHelpers;
 import earth.terrarium.botarium.api.registry.RegistryHolder;
 import earth.terrarium.reaper.Reaper;
-import earth.terrarium.reaper.common.block.SelfIdentifyingRuneBlock;
-import earth.terrarium.reaper.common.block.SoulBeaconBlock;
 import earth.terrarium.reaper.common.block.ReaperGeneratorBlock;
 import earth.terrarium.reaper.common.block.ReaperGeneratorMenu;
+import earth.terrarium.reaper.common.block.SelfIdentifyingRuneBlock;
+import earth.terrarium.reaper.common.block.SoulBeaconBlock;
+import earth.terrarium.reaper.common.blockentity.ReaperGeneratorBlockEntity;
 import earth.terrarium.reaper.common.blockentity.SelfIdentifyingRuneBlockEntity;
 import earth.terrarium.reaper.common.blockentity.SoulBeaconBlockEntity;
-import earth.terrarium.reaper.common.blockentity.ReaperGeneratorBlockEntity;
 import earth.terrarium.reaper.common.util.Utils;
 import me.codexadrian.spirit.Spirit;
 import net.minecraft.core.Registry;
@@ -74,7 +74,8 @@ public class ReaperRegistry {
         return blockRegistry;
     }
 
-    public static void init() {}
+    public static void init() {
+    }
 
     public static void register() {
         ITEMS.initialize();
