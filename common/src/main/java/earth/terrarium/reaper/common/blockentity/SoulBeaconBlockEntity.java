@@ -84,7 +84,8 @@ public class SoulBeaconBlockEntity extends BlockEntity implements EnergyBlock, I
         boolean duplici = false;
         boolean efficio = false;
         boolean hostilis = false;
-        List<UUID> uuids = new ArrayList<>();
+        List<UUID> whitelist = new ArrayList<>();
+        List<UUID> blacklist = new ArrayList<>();
         for (BlockPos runePosition : runePositions) {
             var block = this.getLevel().getBlockState(runePosition);
 
@@ -99,7 +100,11 @@ public class SoulBeaconBlockEntity extends BlockEntity implements EnergyBlock, I
             } else if (block.is(ReaperRegistry.RUNE_BLOCK_HOSTILE_FILTER.get())) {
                 hostilis = true;
             } else if (block.is(ReaperRegistry.RUNE_BLOCK_PERSONAL_FILTER.get()) && this.getLevel().getBlockEntity(runePosition) instanceof SelfIdentifyingRuneBlockEntity runeBlockEntity) {
-                uuids.add(runeBlockEntity.getOwner());
+                if(runeBlockEntity.isWhitelist()) {
+                    whitelist.add(runeBlockEntity.getOwner());
+                } else {
+                    blacklist.add(runeBlockEntity.getOwner());
+                }
             } else if (!block.is(SpiritBlocks.SOUL_STEEL_BLOCK.get())) {
                 return;
             }
@@ -119,8 +124,7 @@ public class SoulBeaconBlockEntity extends BlockEntity implements EnergyBlock, I
             if (this.getEnergyStorage().internalExtract(energyDrain, true) < energyDrain) return;
             timer += tier.minSpawnDelay();
             for (LivingEntity livingEntity : this.level.getEntitiesOfClass(LivingEntity.class, box)) {
-                if (livingEntity instanceof Player && !uuids.isEmpty() && !uuids.contains(livingEntity.getUUID()))
-                    continue;
+                if (livingEntity instanceof Player && ((!whitelist.isEmpty() && !whitelist.contains(livingEntity.getUUID())) || blacklist.contains(livingEntity.getUUID()))) continue;
                 if (livingEntity instanceof Enemy && !finalHostilis) continue;
                 if ((livingEntity instanceof NeutralMob || livingEntity instanceof Animal) && !finalBeastia) continue;
                 MobTraitData.getEffectForEntity(entityType, serverLevel.getRecipeManager())

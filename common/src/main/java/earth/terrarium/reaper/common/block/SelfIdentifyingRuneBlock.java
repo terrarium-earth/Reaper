@@ -37,13 +37,13 @@ public class SelfIdentifyingRuneBlock extends BaseEntityBlock {
                 } else {
                     Player playerByUUID = level.getPlayerByUUID(runeBlockEntity.getOwner());
                     if (playerByUUID != null) {
-                        player.sendSystemMessage(Component.translatable(runeBlockEntity.isWhitelist() ? "block.possessio_rune.whitelist" : "block.possessio_rune.blacklist", playerByUUID.getDisplayName()));
+                        player.displayClientMessage(Component.translatable(runeBlockEntity.isWhitelist() ? "block.possessio_rune.whitelist" : "block.possessio_rune.blacklist", playerByUUID.getDisplayName()), true);
                     }
                     return InteractionResult.SUCCESS;
                 }
             }
         }
-        return InteractionResult.PASS;
+        return InteractionResult.SUCCESS;
     }
 
     @Nullable
