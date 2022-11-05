@@ -21,5 +21,6 @@ public class ReaperClientImpl {
     public static void blockEntityRenderers(final EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ReaperRegistry.REAPER_GEN_BLOCK_ENTITY.get(), ReaperGeneratorRenderer::new);
         event.registerBlockEntityRenderer(ReaperRegistry.SOUL_BEACON_BLOCK_ENTITY.get(), SoulBeaconRenderer::new);
+
     }
 }

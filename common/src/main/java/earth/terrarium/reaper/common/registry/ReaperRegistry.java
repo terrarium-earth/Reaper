@@ -3,17 +3,22 @@ package earth.terrarium.reaper.common.registry;
 import earth.terrarium.botarium.api.registry.RegistryHelpers;
 import earth.terrarium.botarium.api.registry.RegistryHolder;
 import earth.terrarium.reaper.Reaper;
+import earth.terrarium.reaper.common.block.SelfIdentifyingRuneBlock;
 import earth.terrarium.reaper.common.block.SoulBeaconBlock;
 import earth.terrarium.reaper.common.block.ReaperGeneratorBlock;
 import earth.terrarium.reaper.common.block.ReaperGeneratorMenu;
+import earth.terrarium.reaper.common.blockentity.SelfIdentifyingRuneBlockEntity;
 import earth.terrarium.reaper.common.blockentity.SoulBeaconBlockEntity;
 import earth.terrarium.reaper.common.blockentity.ReaperGeneratorBlockEntity;
+import earth.terrarium.reaper.common.util.Utils;
 import me.codexadrian.spirit.Spirit;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -53,7 +58,8 @@ public class ReaperRegistry {
 
     public static final Supplier<Item> SOUL_CATALYST = ITEMS.register("soul_catalyst", () -> new Item(new Item.Properties().tab(Spirit.SPIRIT).rarity(Rarity.RARE)));
 
-    public static final Supplier<Block> RUNE_BLOCK_PERSONAL_FILTER = registerBlockWithItem("rune_block_possessio", () -> new Block(BlockBehaviour.Properties.copy(Blocks.DEEPSLATE)));
+    public static final Supplier<Block> RUNE_BLOCK_PERSONAL_FILTER = registerBlockWithItem("rune_block_possessio", () -> new SelfIdentifyingRuneBlock(BlockBehaviour.Properties.copy(Blocks.DEEPSLATE)));
+    public static final Supplier<BlockEntityType<SelfIdentifyingRuneBlockEntity>> RUNE_BLOCK_PERSONAL_FILTER_ENTITY = BLOCK_ENTITIES.register("rune_block_possessio", () -> RegistryHelpers.createBlockEntityType(SelfIdentifyingRuneBlockEntity::new, RUNE_BLOCK_PERSONAL_FILTER.get()));
     public static final Supplier<Block> RUNE_BLOCK_HOSTILE_FILTER = registerBlockWithItem("rune_block_hostilis", () -> new Block(BlockBehaviour.Properties.copy(Blocks.DEEPSLATE)));
     public static final Supplier<Block> RUNE_BLOCK_NEUTRAL_FILTER = registerBlockWithItem("rune_block_beastia", () -> new Block(BlockBehaviour.Properties.copy(Blocks.DEEPSLATE)));
     public static final Supplier<Block> RUNE_BLOCK_RANGE = registerBlockWithItem("rune_block_dilato", () -> new Block(BlockBehaviour.Properties.copy(Blocks.DEEPSLATE)));
@@ -77,4 +83,9 @@ public class ReaperRegistry {
         SOUNDS.initialize();
         MENUS.initialize();
     }
+
+    public static DamageSource playerSource(ServerLevel serverLevel) {
+        return new EntityDamageSource("reaper", Utils.makeFakePlayer(serverLevel)).bypassArmor().bypassEnchantments().setMagic().setNoAggro();
+    }
+
 }

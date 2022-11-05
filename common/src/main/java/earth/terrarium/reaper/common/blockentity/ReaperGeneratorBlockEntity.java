@@ -11,6 +11,7 @@ import earth.terrarium.reaper.common.block.ReaperGeneratorData;
 import earth.terrarium.reaper.common.block.ReaperGeneratorMenu;
 import earth.terrarium.reaper.common.registry.ReaperRegistry;
 import me.codexadrian.spirit.Corrupted;
+import me.codexadrian.spirit.entity.EntityRarity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -23,6 +24,8 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -73,9 +76,10 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
             if (distance < getMaxRange() && cooldown == 0) {
                 if(distance == 0) {
                     for (int i = 0; i < 4; i++) {
-                        ItemStack item = this.getContainer().getItem(0);
+                        ItemStack item = this.getContainer().getItem(i);
                         if(item.is(ReaperRegistry.SOUL_CATALYST.get())) {
                             item.shrink(1);
+                            this.update();
                             break;
                         }
                     }
@@ -89,29 +93,31 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
                     double z = this.getBlockPos().getZ() + 0.5;
                     serverLevel.sendParticles(ParticleTypes.CRIT, x + size * Math.cos(i), this.getBlockPos().getY() + 0.5, z + size * Math.sin(i), 1, 0.1, 0.1, 0.1, 0.1);
                 }
-                List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(getBlockPos()).inflate(5));
+                List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(getBlockPos()).inflate(getMaxRange()));
                 for (LivingEntity entity : entities) {
                     if (entity instanceof Player && !this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.RUNE_PLAYER.get()))) continue;
-                    if (entity instanceof Corrupted corrupted && corrupted.isCorrupted() && !this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.RUNE_SPIRIT.get()))) continue;
+                    if (entity instanceof Corrupted corrupted && corrupted.isCorrupted()) continue;
                     if (isInRange(entity, distance)) {
                         double healthBefore = entity.getHealth();
                         double entityX = entity.getX();
                         double entityY = entity.getY();
                         double entityZ = entity.getZ();
                         boolean hurt;
-                        if(getDamage() > 0) {
-                            hurt = entity.hurt(ReaperRegistry.REAPER_DAMAGE, getDamage());
-                        } else {
-                            hurt = entity.hurt(ReaperRegistry.REAPER_DAMAGE, 0.5f);
+                        EntityType<?> entityType = entity.getType();
+                        DamageSource reaperDamage = ReaperRegistry.REAPER_DAMAGE;
+                        if(this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.RUNE_SPIRIT.get())) {
+                            DamageSource.playerAttack()
                         }
+                        hurt = entity.hurt(reaperDamage, getDamage() > 0 ? getDamage() : Float.MAX_VALUE);
                         if (hurt) {
-                            double healthLost = healthBefore - entity.getHealth();
+                            double healthLost = 0;
                             if(this.getDamage() == -1) {
                                 serverLevel.sendParticles(ParticleTypes.DRIPPING_OBSIDIAN_TEAR, entityX, entityY, entityZ, 5, 0.1, 0.1, 0.1, 0.1);
-                                entity.kill();
                                 healthLost = healthBefore;
+                            } else {
+                                healthLost = healthBefore - entity.getHealth();
                             }
-                            this.getEnergyStorage().internalInsert((int) (healthLost * getEnergyGeneration()), false);
+                            this.getEnergyStorage().internalInsert((int) (healthLost * getEnergyGeneration() * EntityRarity.getRarity(entityType).energyModifer), false);
                             for (double mobDis = 0; mobDis < 1; mobDis += .2) {
                                 if(this.getDamage() > 0) entity.setDeltaMovement(entity.getDeltaMovement().add(0, .065, 0));
                                 double x = this.getBlockPos().getX() + 0.5 - entityX;

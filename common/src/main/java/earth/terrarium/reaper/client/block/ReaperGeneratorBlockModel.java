@@ -19,7 +19,7 @@ public class ReaperGeneratorBlockModel extends AnimatedGeoModel<ReaperGeneratorB
 
     @Override
     public ResourceLocation getTextureResource(ReaperGeneratorBlockEntity object) {
-        return object.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.SOUL_CATALYST.get())) && object.getEnergyStorage().getStoredEnergy() < object.getEnergyStorage().getMaxCapacity() ? TEXTURE_ACTIVE : TEXTURE_INACTIVE;
+        return object.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.SOUL_CATALYST.get())) ? TEXTURE_ACTIVE : TEXTURE_INACTIVE;
     }
 
     @Override

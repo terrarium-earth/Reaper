@@ -64,3 +64,10 @@ mandatory = true
 versionRange = "[1.19.2,1.20)"
 ordering = "NONE"
 side = "BOTH"
+
+[[dependencies.reaper]]
+modId = "spirit"
+mandatory = true
+versionRange = "[2.2.0,)"
+ordering = "NONE"
+side = "BOTH"
