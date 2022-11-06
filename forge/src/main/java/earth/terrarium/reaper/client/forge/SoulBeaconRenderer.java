@@ -2,9 +2,7 @@ package earth.terrarium.reaper.client.forge;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import earth.terrarium.reaper.client.block.ReaperGeneratorBlockModel;
 import earth.terrarium.reaper.client.block.SoulBeaconBlockModel;
-import earth.terrarium.reaper.common.blockentity.ReaperGeneratorBlockEntity;
 import earth.terrarium.reaper.common.blockentity.SoulBeaconBlockEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;

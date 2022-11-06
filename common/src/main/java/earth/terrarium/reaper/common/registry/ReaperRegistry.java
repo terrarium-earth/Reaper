@@ -34,7 +34,7 @@ public class ReaperRegistry {
     public static RegistryHolder<Item> ITEMS = new RegistryHolder<>(Registry.ITEM, Reaper.MODID);
     public static RegistryHolder<Block> BLOCKS = new RegistryHolder<>(Registry.BLOCK, Reaper.MODID);
     public static RegistryHolder<BlockEntityType<?>> BLOCK_ENTITIES = new RegistryHolder<>(Registry.BLOCK_ENTITY_TYPE, Reaper.MODID);
-    //registry holder of sound events
+
     public static final RegistryHolder<SoundEvent> SOUNDS = new RegistryHolder<>(Registry.SOUND_EVENT, Reaper.MODID);
 
     public static final RegistryHolder<MenuType<?>> MENUS = new RegistryHolder<>(Registry.MENU, Reaper.MODID);
