@@ -220,7 +220,7 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
     }
 
     @Override
-    public SerializableContainer getContainer() {
+    public SimpleItemContainer getContainer() {
         return this.itemContainer == null ? this.itemContainer = new SimpleItemContainer(this, 8) : this.itemContainer;
     }
 

@@ -2,6 +2,12 @@
   "replace": false,
   "values": [
     "reaper:reaper_generator",
-    "reaper:soul_beacon"
+    "reaper:soul_beacon",
+    "reaper:rune_block_beastia",
+    "reaper:rune_block_dilato",
+    "reaper:rune_block_duplici",
+    "reaper:rune_block_efficacia",
+    "reaper:rune_block_hostilis",
+    "reaper:rune_block_possessio"
   ]
 }

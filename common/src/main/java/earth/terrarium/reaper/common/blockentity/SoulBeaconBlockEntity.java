@@ -185,7 +185,7 @@ public class SoulBeaconBlockEntity extends BlockEntity implements EnergyBlock, I
     }
 
     @Override
-    public SerializableContainer getContainer() {
+    public SimpleItemContainer getContainer() {
         return this.itemContainer == null ? this.itemContainer = new SimpleItemContainer(this, 1) : this.itemContainer;
     }
 }
