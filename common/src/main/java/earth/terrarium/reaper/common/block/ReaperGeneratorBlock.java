@@ -25,8 +25,11 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@SuppressWarnings("deprecation")
+@ParametersAreNonnullByDefault
 public class ReaperGeneratorBlock extends BaseEntityBlock {
     public static final VoxelShape SHAPE = box(0, 0, 0, 16, 8, 16);
 

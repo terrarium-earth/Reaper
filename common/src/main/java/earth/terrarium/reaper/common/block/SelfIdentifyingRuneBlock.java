@@ -17,14 +17,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@SuppressWarnings("deprecation")
+@ParametersAreNonnullByDefault
 public class SelfIdentifyingRuneBlock extends BaseEntityBlock {
     public SelfIdentifyingRuneBlock(Properties properties) {
         super(properties);
     }
 
     //override use method to switch the whitelist mode
-
-
     @Override
     public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
         if(!level.isClientSide) {
@@ -33,14 +35,13 @@ public class SelfIdentifyingRuneBlock extends BaseEntityBlock {
                 if(player.getItemInHand(interactionHand).is(SpiritItems.SOUL_STEEL_WAND.get())) {
                     runeBlockEntity.toggleWhitelist();
                     player.displayClientMessage(Component.nullToEmpty("Whitelist mode: " + runeBlockEntity.isWhitelist()), true);
-                    return InteractionResult.SUCCESS;
                 } else {
                     Player playerByUUID = level.getPlayerByUUID(runeBlockEntity.getOwner());
                     if (playerByUUID != null) {
                         player.displayClientMessage(Component.translatable(runeBlockEntity.isWhitelist() ? "block.possessio_rune.whitelist" : "block.possessio_rune.blacklist", runeBlockEntity.getOwnerName()), true);
                     }
-                    return InteractionResult.SUCCESS;
                 }
+                return InteractionResult.SUCCESS;
             }
         }
         return InteractionResult.SUCCESS;
@@ -53,9 +54,9 @@ public class SelfIdentifyingRuneBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void setPlacedBy(Level level, BlockPos blockPos, BlockState blockState, @Nullable LivingEntity livingEntity, ItemStack itemStack) {
-        super.setPlacedBy(level, blockPos, blockState, livingEntity, itemStack);
-        if(level.getBlockEntity(blockPos) instanceof SelfIdentifyingRuneBlockEntity rune && livingEntity != null && livingEntity instanceof Player player) {
+    public void setPlacedBy(Level level, BlockPos blockPos, BlockState blockState, @Nullable LivingEntity entity, ItemStack itemStack) {
+        super.setPlacedBy(level, blockPos, blockState, entity, itemStack);
+        if(level.getBlockEntity(blockPos) instanceof SelfIdentifyingRuneBlockEntity rune && entity instanceof Player player) {
             rune.setOwner(player);
         }
     }

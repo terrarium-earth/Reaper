@@ -1,5 +1,6 @@
 package earth.terrarium.reaper.common.block;
 
+import earth.terrarium.reaper.common.blockentity.ReaperGeneratorBlockEntity;
 import earth.terrarium.reaper.common.registry.ReaperRegistry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
@@ -14,57 +15,70 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class ReaperGeneratorMenu extends AbstractContainerMenu {
-    public final Container container;
-    public final ContainerData data;
+    private final Container container;
+    private final ContainerData data;
+    private final ReaperGeneratorBlockEntity reaperGenerator;
 
-    public ReaperGeneratorMenu(Container container, ContainerData data, int i, Inventory inventory) {
+    public ReaperGeneratorMenu(Container container, ContainerData data, int i, Inventory inventory, ReaperGeneratorBlockEntity reaperGenerator) {
         super(ReaperRegistry.REAPER_GEN_MENU.get(), i);
         this.container = container;
         this.data = data;
-        addPlayerInvSlots(inventory);
-        addDataSlots(data);
+        this.reaperGenerator = reaperGenerator;
         int slot = 0;
         for (int y = 0; y < 4; y++) {
-            this.addSlot(new CatalystSlot(this.container, slot, 96, 17 + y * 18));
+            this.addSlot(new CatalystSlot(this.container, this.reaperGenerator, slot, 96, 17 + y * 18));
             slot++;
         }
         for (int y = 0; y < 4; y++) {
             this.addSlot(new RuneSlot(this.container, slot, 152, 17 + y * 18));
             slot++;
         }
+        addPlayerInvSlots(inventory);
+        addDataSlots(data);
     }
 
-    public ReaperGeneratorMenu(int syncId, Inventory inventory, FriendlyByteBuf byteBuf) {
-        this(new SimpleContainer(8), new SimpleContainerData(6), syncId, inventory);
+    public ReaperGeneratorMenu(int syncId, Inventory inventory, FriendlyByteBuf buf) {
+        this(new SimpleContainer(8), new SimpleContainerData(6), syncId, inventory, (ReaperGeneratorBlockEntity) inventory.player.level.getBlockEntity(buf.readBlockPos()));
     }
 
     @Override
     public ItemStack quickMoveStack(@NotNull Player player, int index) {
-        ItemStack itemStack = ItemStack.EMPTY;
+        ItemStack newStack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
         if (slot.hasItem()) {
-            ItemStack slotItem = slot.getItem();
-            itemStack = slotItem.copy();
-
-            if (index < 12) {
-                if (!this.moveItemStackTo(slotItem, 12, this.slots.size(), true)) {
+            ItemStack originalStack = slot.getItem();
+            newStack = originalStack.copy();
+            if (index < 8) {
+                if (!this.moveItemStackTo(originalStack, 8, this.slots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.moveItemStackTo(slotItem, 0, 12, false)) {
+            } else if (!this.moveItemStackTo(originalStack, 0, 8, false)) {
                 return ItemStack.EMPTY;
             }
 
-            if (slotItem.isEmpty()) {
+            if (originalStack.isEmpty()) {
                 slot.set(ItemStack.EMPTY);
             } else {
                 slot.setChanged();
             }
         }
-        return itemStack;
+        return newStack;
+    }
+
+    public Container getContainer() {
+        return container;
+    }
+
+    public ContainerData getContainerData() {
+        return data;
+    }
+
+    public ReaperGeneratorBlockEntity getBlockEntity() {
+        return reaperGenerator;
     }
 
     @Override
-    public boolean stillValid(Player player) {
+    public boolean stillValid(@NotNull Player player) {
         return true;
     }
 
@@ -92,13 +106,20 @@ public class ReaperGeneratorMenu extends AbstractContainerMenu {
     }
 
     public static class CatalystSlot extends Slot {
-        public CatalystSlot(Container container, int index, int x, int y) {
+        private final ReaperGeneratorBlockEntity reaperGenerator;
+        public CatalystSlot(Container container, ReaperGeneratorBlockEntity reaperGenerator, int index, int x, int y) {
             super(container, index, x, y);
+            this.reaperGenerator = reaperGenerator;
         }
 
         @Override
         public boolean mayPlace(ItemStack stack) {
             return stack.is(ReaperRegistry.SOUL_CATALYST.get());
+        }
+
+        @Override
+        public boolean mayPickup(@NotNull Player player) {
+            return reaperGenerator.cooldown > 30;
         }
     }
 }

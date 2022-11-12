@@ -46,9 +46,11 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.function.Predicate;
 
+@ParametersAreNonnullByDefault
 public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlock, ItemContainerBlock, IAnimatable, ExtraDataMenuProvider {
     private ExtractOnlyEnergyContainer energyContainer;
     private SimpleItemContainer itemContainer;
@@ -223,8 +225,8 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
     }
 
     @Override
-    public void writeExtraData(ServerPlayer player, FriendlyByteBuf buffer) {
-
+    public void writeExtraData(ServerPlayer player, FriendlyByteBuf buf) {
+        buf.writeBlockPos(this.getBlockPos());
     }
 
     @Override
@@ -235,7 +237,7 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
-        return new ReaperGeneratorMenu(this.getContainer(), new ReaperGeneratorData(this), i, inventory);
+        return new ReaperGeneratorMenu(this.getContainer(), new ReaperGeneratorData(this), i, inventory, this);
     }
 
     public int getMaxCooldown() {

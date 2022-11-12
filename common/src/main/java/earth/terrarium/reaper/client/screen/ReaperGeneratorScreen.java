@@ -35,10 +35,10 @@ public class ReaperGeneratorScreen extends AbstractContainerScreen<ReaperGenerat
         super.init();
         var boxComponents = addRenderableWidget(new SelectionList<DeferredInfographic>(leftPos + 11, topPos + 20, 79, 68, 10, entry -> {}));
         boxComponents.updateEntries(List.of(
-                new DeferredInfographic(() -> Component.translatable("gui.reaper.energy", this.menu.data.get(ReaperGeneratorData.PRODUCTION)).withStyle(ChatFormatting.GRAY)),
-                new DeferredInfographic(() -> Component.translatable("gui.reaper.work", this.menu.data.get(ReaperGeneratorData.MAX_COOLDOWN)).withStyle(ChatFormatting.GRAY)),
-                new DeferredInfographic(() -> Component.translatable("gui.reaper.range", this.menu.data.get(ReaperGeneratorData.RANGE)).withStyle(ChatFormatting.GRAY)),
-                new DeferredInfographic(() -> Component.translatable(this.menu.data.get(ReaperGeneratorData.DAMAGE) > 0 ? "gui.reaper.damage" : "gui.reaper.instadeath", this.menu.data.get(ReaperGeneratorData.DAMAGE)).withStyle(ChatFormatting.GRAY))
+                new DeferredInfographic(() -> Component.translatable("gui.reaper.energy", this.menu.getContainerData().get(ReaperGeneratorData.PRODUCTION)).withStyle(ChatFormatting.GRAY)),
+                new DeferredInfographic(() -> Component.translatable("gui.reaper.work", this.menu.getContainerData().get(ReaperGeneratorData.MAX_COOLDOWN)).withStyle(ChatFormatting.GRAY)),
+                new DeferredInfographic(() -> Component.translatable("gui.reaper.range", this.menu.getContainerData().get(ReaperGeneratorData.RANGE)).withStyle(ChatFormatting.GRAY)),
+                new DeferredInfographic(() -> Component.translatable(this.menu.getContainerData().get(ReaperGeneratorData.DAMAGE) > 0 ? "gui.reaper.damage" : "gui.reaper.instadeath", this.menu.getContainerData().get(ReaperGeneratorData.DAMAGE)).withStyle(ChatFormatting.GRAY))
         ));
     }
 
@@ -54,15 +54,15 @@ public class ReaperGeneratorScreen extends AbstractContainerScreen<ReaperGenerat
     }
 
     public Supplier<Integer> getEnergyLevel() {
-        return () -> menu.data.get(ReaperGeneratorData.ENERGY);
+        return () -> menu.getContainerData().get(ReaperGeneratorData.ENERGY);
     }
 
     public Supplier<Integer> getTicks() {
-        return () -> menu.data.get(ReaperGeneratorData.COOLDOWN);
+        return () -> menu.getContainerData().get(ReaperGeneratorData.COOLDOWN);
     }
 
     public Supplier<Integer> getMaxTicks() {
-        return () -> menu.data.get(ReaperGeneratorData.MAX_COOLDOWN);
+        return () -> menu.getContainerData().get(ReaperGeneratorData.MAX_COOLDOWN);
     }
 
     @Override
