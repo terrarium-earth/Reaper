@@ -1,0 +1,2 @@
+Reaper 1.0.2
+Fixed shift clicking into menu for Reaper Gen
