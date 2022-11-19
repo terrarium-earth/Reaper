@@ -55,12 +55,12 @@ tasks.register("generateDiscordEmbed") {
 
         var json = JsonOutput.toJson([
                 content: null,
-                embeds: [
+                embeds: [[
                         title: archives_base_name,
                         color: Integer.parseInt(env.EMBED_COLOR, 16),
                         fields: fields,
                         thumbnail: [url: env.WEBHOOK_THUMBNAIL]
-                ],
+                ]],
                 username: env.WEBHOOK_USERNAME,
                 avatar_url: env.WEBHOOK_AVATAR,
                 attatchments: []
@@ -148,6 +148,12 @@ allprojects {
             url = 'https://maven.cafeteria.dev/releases'
             content {
                 includeGroup 'dev.cafeteria'
+            }
+        }
+        maven {
+            url "https://cursemaven.com"
+            content {
+                includeGroup "curse.maven"
             }
         }
     }
