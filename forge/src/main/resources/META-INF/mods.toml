@@ -71,3 +71,17 @@ mandatory = true
 versionRange = "[2.2.0,)"
 ordering = "NONE"
 side = "BOTH"
+
+[[dependencies.reaper]]
+modId = "resourcefullib"
+mandatory = true
+versionRange = "[1.1.15,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.reaper]]
+modId = "botarium"
+mandatory = true
+versionRange = "[1.7.9,)"
+ordering = "NONE"
+side = "BOTH"

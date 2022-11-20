@@ -18,8 +18,8 @@ configurations {
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
-    include modApi("com.teamresourceful.resourcefullib:resourcefullib-fabric-$rootProject.resourcefullib_version")
-    include modApi("earth.terrarium:botarium-fabric-${minecraft_version}:${botarium_version}")
+    modApi("com.teamresourceful.resourcefullib:resourcefullib-fabric-$rootProject.resourcefullib_version")
+    modApi("earth.terrarium:botarium-fabric-${minecraft_version}:${botarium_version}")
     modImplementation "software.bernie.geckolib:geckolib-fabric-1.19:${geckolib_fabric_version}"
     modImplementation("me.codexadrian.spirit:spirit-fabric-1.19.2:${rootProject.spirit_version}") {transitive = false}
     common(project(path: ":common", configuration: "namedElements")) { transitive false }

@@ -26,6 +26,8 @@
   "depends": {
     "fabricloader": ">=0.14.10",
     "minecraft": ">=1.19.2",
-    "spirit": ">=2.2.0"
+    "spirit": ">=2.2.0",
+    "resourcefullib": ">=1.1.15",
+    "botarium": ">=1.7.9"
   }
 }

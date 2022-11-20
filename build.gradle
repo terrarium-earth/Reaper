@@ -63,7 +63,11 @@ tasks.register("generateDiscordEmbed") {
                 ]],
                 username: env.WEBHOOK_USERNAME,
                 avatar_url: env.WEBHOOK_AVATAR,
-                attatchments: []
+                attatchments: [],
+                footer: [
+                        text: "Want to support us? Check out our Ko-fi! http://kofi.terrarium.earth",
+                        icon_url: "https://cdn.discordapp.com/attachments/881367981463072809/1044025688719626250/61e1116779fc0a9bd5bdbcc7_Frame_6.png"
+                ]
         ])
 
         new File(projectDir, "embed.json").write(json)
@@ -105,6 +109,15 @@ subprojects {
                 if (modLoader == "fabric") {
                     dependencies {
                         required.project "fabric-api"
+                        required.project "spirit"
+                        required.project "resourceful-lib"
+                        required.project "botarium"
+                    }
+                } else {
+                    dependencies {
+                        required.project "spirit"
+                        required.project "resourceful-lib"
+                        required.project "botarium"
                     }
                 }
             }
@@ -125,6 +138,15 @@ subprojects {
                     if (modLoader == "fabric") {
                         relations {
                             requiredDependency "fabric-api"
+                            requiredDependency "spirit"
+                            requiredDependency "resourceful-lib"
+                            requiredDependency "botarium"
+                        }
+                    } else {
+                        relations {
+                            requiredDependency "spirit"
+                            requiredDependency "resourceful-lib"
+                            requiredDependency "botarium"
                         }
                     }
                 }
