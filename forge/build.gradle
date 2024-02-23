@@ -17,6 +17,7 @@ configurations {
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.forge_version}"
     modApi("com.teamresourceful.resourcefullib:resourcefullib-forge-$rootProject.resourcefullib_version")
+    modImplementation "com.teamresourceful.resourcefulconfig:resourcefulconfig-forge-$rootProject.resourceful_config_version"
     modApi("earth.terrarium:botarium-forge-${minecraft_version}:${botarium_version}")
     modImplementation "software.bernie.geckolib:geckolib-forge-1.19:${geckolib_forge_version}"
     modImplementation("me.codexadrian.spirit:spirit-forge-1.19.2:${rootProject.spirit_version}") {transitive = false}

@@ -3,8 +3,8 @@ package earth.terrarium.reaper.common.blockentity;
 import earth.terrarium.botarium.api.energy.EnergyBlock;
 import earth.terrarium.botarium.api.energy.InsertOnlyEnergyContainer;
 import earth.terrarium.botarium.api.item.ItemContainerBlock;
-import earth.terrarium.botarium.api.item.SerializableContainer;
 import earth.terrarium.botarium.api.item.SimpleItemContainer;
+import earth.terrarium.reaper.common.config.ReaperConfig;
 import earth.terrarium.reaper.common.registry.ReaperRegistry;
 import me.codexadrian.spirit.data.MobTraitData;
 import me.codexadrian.spirit.data.Tier;
@@ -47,7 +47,6 @@ public class SoulBeaconBlockEntity extends BlockEntity implements EnergyBlock, I
     private InsertOnlyEnergyContainer energyContainer;
     private SimpleItemContainer itemContainer;
     private final AnimationFactory factory = new AnimationFactory(this);
-    private static final int ENERGY_CAPACITY = 1000000;
     private int timer = 0;
     private static final List<BlockPos> offsets = new ArrayList<>(
             List.of(
@@ -71,7 +70,7 @@ public class SoulBeaconBlockEntity extends BlockEntity implements EnergyBlock, I
 
     @Override
     public InsertOnlyEnergyContainer getEnergyStorage() {
-        return energyContainer == null ? energyContainer = new InsertOnlyEnergyContainer(this, ENERGY_CAPACITY) : energyContainer;
+        return energyContainer == null ? energyContainer = new InsertOnlyEnergyContainer(this, ReaperConfig.soulBeaconEnergyCap) : energyContainer;
     }
 
     public void tick() {

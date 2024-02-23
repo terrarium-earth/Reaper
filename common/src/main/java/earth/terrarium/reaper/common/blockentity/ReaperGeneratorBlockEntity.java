@@ -4,11 +4,11 @@ import earth.terrarium.botarium.api.energy.EnergyBlock;
 import earth.terrarium.botarium.api.energy.EnergyHooks;
 import earth.terrarium.botarium.api.energy.ExtractOnlyEnergyContainer;
 import earth.terrarium.botarium.api.item.ItemContainerBlock;
-import earth.terrarium.botarium.api.item.SerializableContainer;
 import earth.terrarium.botarium.api.item.SimpleItemContainer;
 import earth.terrarium.botarium.api.menu.ExtraDataMenuProvider;
 import earth.terrarium.reaper.common.block.ReaperGeneratorData;
 import earth.terrarium.reaper.common.block.ReaperGeneratorMenu;
+import earth.terrarium.reaper.common.config.ReaperConfig;
 import earth.terrarium.reaper.common.registry.ReaperRegistry;
 import me.codexadrian.spirit.Corrupted;
 import me.codexadrian.spirit.entity.EntityRarity;
@@ -67,7 +67,7 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
 
     @Override
     public ExtractOnlyEnergyContainer getEnergyStorage() {
-        return energyContainer == null ? energyContainer = new ExtractOnlyEnergyContainer(this, 1000000) : energyContainer;
+        return energyContainer == null ? energyContainer = new ExtractOnlyEnergyContainer(this, ReaperConfig.genEnergyCap) : energyContainer;
     }
 
     public void tick() {
@@ -172,15 +172,19 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
     }
 
     public int getMaxRange() {
-        return this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.RUNE_RANGE.get())) ? 8 : 5;
+        return this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.RUNE_RANGE.get())) ? ReaperConfig.genMaxRangeWithRune : ReaperConfig.genMaxRange;
     }
 
     public int getDamage() {
-        return this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.RUNE_INSTADEATH.get())) ? -1 : 5;
+        return this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.RUNE_INSTADEATH.get())) ? ReaperConfig.genDamageWithRune : ReaperConfig.genDamage;
     }
 
     public int getEnergyGeneration() {
-        return this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.RUNE_MORE_ENERGY.get())) ? 100 : 50;
+        return this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.RUNE_MORE_ENERGY.get())) ? ReaperConfig.genEnergyProdWithRune : ReaperConfig.genEnergyProd;
+    }
+
+    public int getMaxCooldown() {
+        return this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.RUNE_SPEED.get())) ? ReaperConfig.genCooldownWithRune : ReaperConfig.genCooldown;
     }
 
     @Override
@@ -240,7 +244,4 @@ public class ReaperGeneratorBlockEntity extends BlockEntity implements EnergyBlo
         return new ReaperGeneratorMenu(this.getContainer(), new ReaperGeneratorData(this), i, inventory, this);
     }
 
-    public int getMaxCooldown() {
-        return this.getContainer().hasAnyMatching(stack -> stack.is(ReaperRegistry.RUNE_SPEED.get())) ? 60 : 120;
-    }
 }
